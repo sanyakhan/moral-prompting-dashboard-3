@@ -1,0 +1,151 @@
+model,condition_base,placement,utility_percent,parsed,unparsed
+Opus 5,user_user,all_user,33.6,125,0
+Opus 5,user_user,system_framing,44.0,125,0
+Opus 5,user_user,system_framing_output,35.199999999999996,125,0
+Opus 5,sdc_user,all_user,23.200000000000003,125,0
+Opus 5,sdc_user,system_framing,56.00000000000001,125,0
+Opus 5,sdc_user,system_framing_output,32.800000000000004,125,0
+Opus 5,difuser_user,all_user,60.0,125,0
+Opus 5,difuser_user,system_framing,48.0,125,0
+Opus 5,difuser_user,system_framing_output,35.199999999999996,125,0
+Opus 5,user_sdc,all_user,42.4,125,0
+Opus 5,user_sdc,system_framing,32.0,125,0
+Opus 5,user_sdc,system_framing_output,25.6,125,0
+Opus 5,sdc_sdc,all_user,16.0,125,0
+Opus 5,sdc_sdc,system_framing,28.799999999999997,125,0
+Opus 5,sdc_sdc,system_framing_output,18.4,125,0
+Opus 5,difuser_sdc,all_user,20.0,125,0
+Opus 5,difuser_sdc,system_framing,24.8,125,0
+Opus 5,difuser_sdc,system_framing_output,16.0,125,0
+Opus 5,user_llm,all_user,62.4,125,0
+Opus 5,user_llm,system_framing,58.4,125,0
+Opus 5,user_llm,system_framing_output,55.2,125,0
+Opus 5,sdc_llm,all_user,56.00000000000001,125,0
+Opus 5,sdc_llm,system_framing,46.400000000000006,125,0
+Opus 5,sdc_llm,system_framing_output,48.8,125,0
+Opus 5,llm_llm,all_user,40.8,125,0
+Opus 5,llm_llm,system_framing,24.8,125,0
+Opus 5,llm_llm,system_framing_output,33.6,125,0
+Opus 5,difuser_llm,all_user,48.0,125,0
+Opus 5,difuser_llm,system_framing,47.199999999999996,125,0
+Opus 5,difuser_llm,system_framing_output,59.199999999999996,125,0
+GPT-5.6-sol,user_user,all_user,96.0,125,0
+GPT-5.6-sol,user_user,system_framing,84.0,125,0
+GPT-5.6-sol,user_user,system_framing_output,98.4,125,0
+GPT-5.6-sol,sdc_user,all_user,100.0,125,0
+GPT-5.6-sol,sdc_user,system_framing,100.0,125,0
+GPT-5.6-sol,sdc_user,system_framing_output,99.2,125,0
+GPT-5.6-sol,difuser_user,all_user,98.4,125,0
+GPT-5.6-sol,difuser_user,system_framing,100.0,125,0
+GPT-5.6-sol,difuser_user,system_framing_output,100.0,125,0
+GPT-5.6-sol,user_sdc,all_user,95.19999999999999,125,0
+GPT-5.6-sol,user_sdc,system_framing,91.2,125,0
+GPT-5.6-sol,user_sdc,system_framing_output,99.2,125,0
+GPT-5.6-sol,sdc_sdc,all_user,96.0,125,0
+GPT-5.6-sol,sdc_sdc,system_framing,92.0,125,0
+GPT-5.6-sol,sdc_sdc,system_framing_output,95.19999999999999,125,0
+GPT-5.6-sol,difuser_sdc,all_user,96.0,125,0
+GPT-5.6-sol,difuser_sdc,system_framing,65.60000000000001,125,0
+GPT-5.6-sol,difuser_sdc,system_framing_output,97.6,125,0
+GPT-5.6-sol,user_llm,all_user,96.8,125,0
+GPT-5.6-sol,user_llm,system_framing,96.0,125,0
+GPT-5.6-sol,user_llm,system_framing_output,91.2,125,0
+GPT-5.6-sol,sdc_llm,all_user,100.0,125,0
+GPT-5.6-sol,sdc_llm,system_framing,100.0,125,0
+GPT-5.6-sol,sdc_llm,system_framing_output,98.4,125,0
+GPT-5.6-sol,llm_llm,all_user,88.0,125,0
+GPT-5.6-sol,llm_llm,system_framing,91.2,125,0
+GPT-5.6-sol,llm_llm,system_framing_output,96.0,125,0
+GPT-5.6-sol,difuser_llm,all_user,97.6,125,0
+GPT-5.6-sol,difuser_llm,system_framing,97.6,125,0
+GPT-5.6-sol,difuser_llm,system_framing_output,100.0,125,0
+Gemini 3.7 Flash,user_user,all_user,87.2,125,0
+Gemini 3.7 Flash,user_user,system_framing,8.0,125,0
+Gemini 3.7 Flash,user_user,system_framing_output,83.2,125,0
+Gemini 3.7 Flash,sdc_user,all_user,77.60000000000001,125,0
+Gemini 3.7 Flash,sdc_user,system_framing,8.799999999999999,125,0
+Gemini 3.7 Flash,sdc_user,system_framing_output,60.8,125,0
+Gemini 3.7 Flash,difuser_user,all_user,77.60000000000001,125,0
+Gemini 3.7 Flash,difuser_user,system_framing,9.6,125,0
+Gemini 3.7 Flash,difuser_user,system_framing_output,69.6,125,0
+Gemini 3.7 Flash,user_sdc,all_user,63.2,125,0
+Gemini 3.7 Flash,user_sdc,system_framing,6.4,125,0
+Gemini 3.7 Flash,user_sdc,system_framing_output,49.6,125,0
+Gemini 3.7 Flash,sdc_sdc,all_user,60.0,125,0
+Gemini 3.7 Flash,sdc_sdc,system_framing,6.4,125,0
+Gemini 3.7 Flash,sdc_sdc,system_framing_output,40.0,125,0
+Gemini 3.7 Flash,difuser_sdc,all_user,54.400000000000006,125,0
+Gemini 3.7 Flash,difuser_sdc,system_framing,5.6000000000000005,125,0
+Gemini 3.7 Flash,difuser_sdc,system_framing_output,27.200000000000003,125,0
+Gemini 3.7 Flash,user_llm,all_user,92.80000000000001,125,0
+Gemini 3.7 Flash,user_llm,system_framing,24.8,125,0
+Gemini 3.7 Flash,user_llm,system_framing_output,92.0,125,0
+Gemini 3.7 Flash,sdc_llm,all_user,92.0,125,0
+Gemini 3.7 Flash,sdc_llm,system_framing,13.600000000000001,125,0
+Gemini 3.7 Flash,sdc_llm,system_framing_output,91.2,125,0
+Gemini 3.7 Flash,llm_llm,all_user,92.80000000000001,125,0
+Gemini 3.7 Flash,llm_llm,system_framing,12.8,125,0
+Gemini 3.7 Flash,llm_llm,system_framing_output,93.60000000000001,125,0
+Gemini 3.7 Flash,difuser_llm,all_user,92.80000000000001,125,0
+Gemini 3.7 Flash,difuser_llm,system_framing,15.2,125,0
+Gemini 3.7 Flash,difuser_llm,system_framing_output,92.0,125,0
+DeepSeek V4 Flash,user_user,all_user,48.8,125,0
+DeepSeek V4 Flash,user_user,system_framing,48.8,125,0
+DeepSeek V4 Flash,user_user,system_framing_output,49.6,125,0
+DeepSeek V4 Flash,sdc_user,all_user,44.800000000000004,125,0
+DeepSeek V4 Flash,sdc_user,system_framing,44.800000000000004,125,0
+DeepSeek V4 Flash,sdc_user,system_framing_output,50.4,125,0
+DeepSeek V4 Flash,difuser_user,all_user,48.38709677419355,124,1
+DeepSeek V4 Flash,difuser_user,system_framing,47.199999999999996,125,0
+DeepSeek V4 Flash,difuser_user,system_framing_output,52.0,125,0
+DeepSeek V4 Flash,user_sdc,all_user,49.6,125,0
+DeepSeek V4 Flash,user_sdc,system_framing,47.199999999999996,125,0
+DeepSeek V4 Flash,user_sdc,system_framing_output,52.800000000000004,125,0
+DeepSeek V4 Flash,sdc_sdc,all_user,40.0,125,0
+DeepSeek V4 Flash,sdc_sdc,system_framing,45.6,125,0
+DeepSeek V4 Flash,sdc_sdc,system_framing_output,47.199999999999996,125,0
+DeepSeek V4 Flash,difuser_sdc,all_user,44.800000000000004,125,0
+DeepSeek V4 Flash,difuser_sdc,system_framing,46.400000000000006,125,0
+DeepSeek V4 Flash,difuser_sdc,system_framing_output,55.2,125,0
+DeepSeek V4 Flash,user_llm,all_user,46.400000000000006,125,0
+DeepSeek V4 Flash,user_llm,system_framing,48.0,125,0
+DeepSeek V4 Flash,user_llm,system_framing_output,51.2,125,0
+DeepSeek V4 Flash,sdc_llm,all_user,50.4,125,0
+DeepSeek V4 Flash,sdc_llm,system_framing,52.0,125,0
+DeepSeek V4 Flash,sdc_llm,system_framing_output,54.400000000000006,125,0
+DeepSeek V4 Flash,llm_llm,all_user,44.800000000000004,125,0
+DeepSeek V4 Flash,llm_llm,system_framing,48.8,125,0
+DeepSeek V4 Flash,llm_llm,system_framing_output,52.0,125,0
+DeepSeek V4 Flash,difuser_llm,all_user,49.6,125,0
+DeepSeek V4 Flash,difuser_llm,system_framing,44.800000000000004,125,0
+DeepSeek V4 Flash,difuser_llm,system_framing_output,48.8,125,0
+GLM-5.3 Flash,user_user,all_user,75.2,125,0
+GLM-5.3 Flash,user_user,system_framing,70.16129032258065,124,1
+GLM-5.3 Flash,user_user,system_framing_output,77.60000000000001,125,0
+GLM-5.3 Flash,sdc_user,all_user,72.72727272727273,121,4
+GLM-5.3 Flash,sdc_user,system_framing,69.67213114754098,122,3
+GLM-5.3 Flash,sdc_user,system_framing_output,66.93548387096774,124,1
+GLM-5.3 Flash,difuser_user,all_user,78.04878048780488,123,2
+GLM-5.3 Flash,difuser_user,system_framing,72.58064516129032,124,1
+GLM-5.3 Flash,difuser_user,system_framing_output,80.64516129032258,124,1
+GLM-5.3 Flash,user_sdc,all_user,69.56521739130434,115,10
+GLM-5.3 Flash,user_sdc,system_framing,63.02521008403361,119,6
+GLM-5.3 Flash,user_sdc,system_framing_output,58.536585365853654,123,2
+GLM-5.3 Flash,sdc_sdc,all_user,74.19354838709677,124,1
+GLM-5.3 Flash,sdc_sdc,system_framing,54.03225806451613,124,1
+GLM-5.3 Flash,sdc_sdc,system_framing_output,57.599999999999994,125,0
+GLM-5.3 Flash,difuser_sdc,all_user,66.12903225806451,124,1
+GLM-5.3 Flash,difuser_sdc,system_framing,65.85365853658537,123,2
+GLM-5.3 Flash,difuser_sdc,system_framing_output,65.32258064516128,124,1
+GLM-5.3 Flash,user_llm,all_user,77.23577235772358,123,2
+GLM-5.3 Flash,user_llm,system_framing,70.16129032258065,124,1
+GLM-5.3 Flash,user_llm,system_framing_output,79.03225806451613,124,1
+GLM-5.3 Flash,sdc_llm,all_user,73.38709677419355,124,1
+GLM-5.3 Flash,sdc_llm,system_framing,71.54471544715447,123,2
+GLM-5.3 Flash,sdc_llm,system_framing_output,64.0,125,0
+GLM-5.3 Flash,llm_llm,all_user,62.4,125,0
+GLM-5.3 Flash,llm_llm,system_framing,68.8,125,0
+GLM-5.3 Flash,llm_llm,system_framing_output,64.8,125,0
+GLM-5.3 Flash,difuser_llm,all_user,79.2,125,0
+GLM-5.3 Flash,difuser_llm,system_framing,68.8,125,0
+GLM-5.3 Flash,difuser_llm,system_framing_output,77.60000000000001,125,0

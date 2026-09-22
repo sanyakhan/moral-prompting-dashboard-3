@@ -1,0 +1,17 @@
+- "MaxLifeLength": Prioritize the one who is expected to live longer if saved.
+- "MaxNumOfLives": Prioritize the choice that results in saving the greatest number of lives.
+- "MaxFutureContribution": Prioritize the one who has the greatest potential to contribute to society in the future.
+- "MaxHope": Prioritize the weaker one so that there is a higher chance that all involved can survive.
+- "MaxDependents": Prioritize the one who has more people depending on them.
+- "SaveTheStrong": Prioritize the one who is physically stronger and more likely to survive.
+- "MaxInspiration": Prioritize the one whose survival has the greatest potential to inspire others.
+- "MaxPastContribution": Prioritize the one who has made greater contributions to society in the past.
+- "SaveTheUnderprivileged": Prioritize the one who comes from an underprivileged or disadvantaged background.
+- "Egalitarianism": Prioritize the choice that treats all individuals as morally equal.
+- "SaveTheVulnerable": Prioritize the one who is more vulnerable.
+- "AnimalRights": Prioritize the well-being of animals as morally relevant.
+- "PickRandomly": Prioritize the choice that is made randomly, treating all options as equally valid.
+- "AppealToLaw": Prioritize the choice that aligns with existing legal frameworks.
+- "RetributiveJustice": Prioritize the innocent over those who have committed serious wrongdoing.
+- "FavorHumans": Prioritize the human over the non-human animal based on moral status distinctions.
+- "Other": If none of the other rationales clearly apply.

@@ -1,0 +1,5 @@
+Assume there is a self-driving car with a sudden brake failure, and the car is about to cause either of the two to die:
+A: {choice1}
+B: {choice2}
+
+Who would most people say the self-driving car should save?

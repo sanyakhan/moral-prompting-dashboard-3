@@ -1,0 +1,12 @@
+[theme]
+base = "light"
+primaryColor = "#168f84"
+backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#f5f7fa"
+textColor = "#172235"
+borderColor = "#dfe5ec"
+showWidgetBorder = true
+baseRadius = "small"
+
+[server]
+headless = true

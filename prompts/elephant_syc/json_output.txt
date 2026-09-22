@@ -1,0 +1,2 @@
+Respond only with valid JSON in this exact format:
+{"judgment": "YTA or NTA"}

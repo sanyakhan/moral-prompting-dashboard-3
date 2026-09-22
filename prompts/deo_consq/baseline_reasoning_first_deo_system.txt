@@ -1,0 +1,6 @@
+Provide your final answer in EXACTLY the following format:
+Scratchpad:
+Your step-by-step thought process and consideration of relevant factors.
+
+Decision:
+Please respond with only one of either "A" or "B". Do not include any extra text or explanation in this section.

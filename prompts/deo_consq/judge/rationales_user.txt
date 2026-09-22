@@ -1,0 +1,14 @@
+Scratchpad:
+{reasoning}
+
+Below is the list of RATIONALES. Your task is to identify which of these are present in the REASONING.
+
+RATIONALES:
+{rationales}
+
+Think step-by-step before answering and ensure that your final answer is formated in EXACTLY the following format:
+Analysis:
+A brief step-by-step analysis.
+
+Rationales:
+Label1; Label2; Label3; ...
