@@ -1491,6 +1491,75 @@ def airisk_heatmap(model: str) -> go.Figure:
     return figure
 
 
+def airisk_collapsed_heatmap(model: str, collapse: str) -> go.Figure:
+    matrix = np.asarray(AIRISK_MATRICES[model], dtype=float)
+    if collapse == "placement":
+        labels = ["User owner", "AI-agent owner", "LLM owner"]
+        values = []
+        for owner_index in range(3):
+            indices = [owner_index * 3 + placement_index for placement_index in range(3)]
+            values.append(
+                np.mean(
+                    [
+                        matrix[indices[left], indices[right]]
+                        for left in range(3)
+                        for right in range(left + 1, 3)
+                    ]
+                )
+            )
+        title = "Placement stability by decision owner"
+        detail = "Mean of three placement-pair correlations"
+    else:
+        labels = ["All-user", "System framing", "System + output"]
+        values = []
+        for placement_index in range(3):
+            indices = [owner_index * 3 + placement_index for owner_index in range(3)]
+            values.append(
+                np.mean(
+                    [
+                        matrix[indices[left], indices[right]]
+                        for left in range(3)
+                        for right in range(left + 1, 3)
+                    ]
+                )
+            )
+        title = "Decision-owner stability by placement"
+        detail = "Mean of three decision-owner-pair correlations"
+
+    values_array = np.asarray([values])
+    figure = go.Figure(
+        go.Heatmap(
+            z=values_array,
+            x=labels,
+            y=["Mean rho"],
+            zmin=.35,
+            zmax=1,
+            colorscale="RdYlBu",
+            text=np.vectorize(lambda value: f"{value:.3f}")(values_array),
+            texttemplate="%{text}",
+            hovertemplate=(
+                "%{x}<br>Mean Spearman rho: %{z:.3f}<br>" + detail + "<extra></extra>"
+            ),
+            colorbar={
+                "title": {"text": "Mean rho", "side": "right"},
+                "thickness": 12,
+                "len": .8,
+            },
+        )
+    )
+    figure.update_layout(
+        title={"text": title, "font": {"size": 14}},
+        height=210,
+        margin={"l": 12, "r": 18, "t": 46, "b": 42},
+        xaxis={"title": None, "side": "bottom"},
+        yaxis={"title": None, "showticklabels": False},
+        paper_bgcolor="white",
+        plot_bgcolor="white",
+        font={"color": "#172235"},
+    )
+    return figure
+
+
 def render_header() -> None:
     st.title("Moral prompting results")
 
@@ -1652,8 +1721,25 @@ def render_airisk_prompt_study() -> None:
         key="airisk_model",
     )
     with st.container(border=True):
-        st.markdown("**Every displayed number directly compares two conditions. Nothing is collapsed or averaged.**")
+        st.markdown(
+            "**In the large matrix, every number directly compares two conditions; "
+            "nothing is collapsed or averaged.**"
+        )
         st.plotly_chart(airisk_heatmap(model), width="stretch", theme=None)
+        st.markdown("**Collapsed summaries · higher values mean greater ranking stability**")
+        placement_col, owner_col = st.columns(2)
+        with placement_col:
+            st.plotly_chart(
+                airisk_collapsed_heatmap(model, "placement"),
+                width="stretch",
+                theme=None,
+            )
+        with owner_col:
+            st.plotly_chart(
+                airisk_collapsed_heatmap(model, "owner"),
+                width="stretch",
+                theme=None,
+            )
 
     key = pd.DataFrame(
         {
