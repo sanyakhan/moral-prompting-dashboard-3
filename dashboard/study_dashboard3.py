@@ -2215,7 +2215,7 @@ def main() -> None:
     elif benchmark == "Role Conflict":
         render_elephant(
             80,
-            y_axis_min=50,
+            y_axis_min=0,
             dataset="Role Conflict",
             title="Role Conflict",
             key_prefix="role_conflict",
