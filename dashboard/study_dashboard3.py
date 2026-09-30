@@ -1903,7 +1903,7 @@ def render_realism_classifier(benchmark: str) -> None:
         },
         key=f"realism_grid_{benchmark}",
         width="stretch",
-        height=430,
+        height=680,
         on_labels_change=lambda: None,
     )
     next_labels = getattr(result, "labels", None)
@@ -2088,35 +2088,35 @@ def render_realism() -> None:
     def update_realism_benchmark() -> None:
         st.session_state.realism_benchmark = st.session_state.realism_benchmark_choice
 
-    with st.popover(
-        f"Prompt classifier · {st.session_state.realism_benchmark}",
-        icon=":material/grid_view:",
+    st.segmented_control(
+        "Benchmark",
+        realism_benchmarks,
+        key="realism_benchmark_choice",
+        on_change=update_realism_benchmark,
         width="stretch",
-    ):
-        st.segmented_control(
-            "Benchmark",
-            realism_benchmarks,
-            key="realism_benchmark_choice",
-            on_change=update_realism_benchmark,
-            width="stretch",
-        )
-        benchmark = st.session_state.realism_benchmark
+    )
+    benchmark = st.session_state.realism_benchmark
+
+    classifier_column, chart_column = st.columns([1, 1], gap="medium")
+    with classifier_column:
+        st.subheader("Prompt classifier")
         render_realism_classifier(benchmark)
 
-    benchmark = st.session_state.realism_benchmark
-    figure = realism_group_chart(benchmark)
-    if figure is None:
-        st.info(
-            "Select at least one Feasible prompt to show the comparison; all remaining prompts "
-            "are treated as Not feasible."
+    with chart_column:
+        st.subheader(benchmark)
+        st.caption(
+            "Faint dots are classified prompt conditions. Outlined points and whiskers are group "
+            "means and bootstrap 95% confidence intervals across conditions."
         )
-        return
-    st.subheader(benchmark)
-    st.caption(
-        "Faint dots are classified prompt conditions. Outlined points and whiskers are group "
-        "means and bootstrap 95% confidence intervals across conditions."
-    )
-    st.plotly_chart(figure, width="stretch", theme=None)
+        figure = realism_group_chart(benchmark)
+        if figure is None:
+            st.info(
+                "Select at least one Feasible prompt to show the comparison; all remaining "
+                "prompts are treated as Not feasible."
+            )
+        else:
+            figure.update_layout(height=680)
+            st.plotly_chart(figure, width="stretch", theme=None)
 
 
 
