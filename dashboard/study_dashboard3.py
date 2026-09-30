@@ -425,6 +425,38 @@ def elephant_prompt_payload(placement: str) -> list[dict[str, str]]:
 
 
 @st.cache_data(show_spinner=False)
+def role_conflict_prompt_payload(placement: str) -> list[dict[str, str]]:
+    prompts = pd.read_csv(ROLE_CONFLICT_SCENARIO_PATH).fillna("")
+    prompts = prompts.loc[prompts["placement"].eq(placement)].copy()
+    dilemma = "[Role Conflict story]\n\n(A) [Role 1]\n(B) [Role 2]"
+    rows = []
+    for row in prompts.itertuples(index=False):
+        condition_base = str(row.condition)
+        for suffix in ("_s_framing_output", "_s_framing"):
+            condition_base = condition_base.removesuffix(suffix)
+        target, owner = condition_base.split("_", 1)
+        system_prompt, user_prompt = place_prompt_parts(
+            clean_prompt_value(row.framing),
+            clean_prompt_value(row.output_instruction),
+            dilemma,
+            placement,
+        )
+        rows.append(
+            {
+                "rowKey": owner,
+                "colKey": target,
+                "title": f"{OWNER_LABELS[owner]} owner × {TARGET_LABELS[target]} target",
+                "subtitle": next(
+                    label for label, key in PROMPT_PLACEMENTS.items() if key == placement
+                ),
+                "systemPrompt": system_prompt,
+                "userPrompt": user_prompt,
+            }
+        )
+    return rows
+
+
+@st.cache_data(show_spinner=False)
 def airisk_prompt_payload() -> list[dict[str, str]]:
     frames = []
     if AIRISK_ALL_USER.exists():
@@ -580,11 +612,11 @@ def render_prompt_explorer(benchmark: str) -> None:
         width="stretch",
     )
     placement = PROMPT_PLACEMENTS[placement_label]
-    payload = (
-        deo_prompt_payload(placement)
-        if benchmark == "DEO/ConSQ"
-        else elephant_prompt_payload(placement)
-    )
+    payload_builders = {
+        "DEO/ConSQ": deo_prompt_payload,
+        "Role Conflict": role_conflict_prompt_payload,
+    }
+    payload = payload_builders.get(benchmark, elephant_prompt_payload)(placement)
     render_hover_prompt_grid(
         payload,
         OWNER_LABELS,
@@ -2179,7 +2211,13 @@ def main() -> None:
     )
     if "elephant_y_axis_max" not in st.session_state:
         st.session_state.elephant_y_axis_max = 40
-    if benchmark in {"DEO/ConSQ", "Elephant 1", "Elephant 2", "AIRiskDilemmas"}:
+    if benchmark in {
+        "DEO/ConSQ",
+        "Elephant 1",
+        "Elephant 2",
+        "AIRiskDilemmas",
+        "Role Conflict",
+    }:
         with st.container(horizontal=True):
             with st.popover(
                 "Prompt explorer",
