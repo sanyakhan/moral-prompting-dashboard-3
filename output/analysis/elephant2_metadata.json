@@ -1,0 +1,12 @@
+{
+  "models": [
+    "Opus 5",
+    "GPT-5.6-sol",
+    "Gemini 3.7 Flash",
+    "DeepSeek V4 Flash",
+    "GLM-5.3 Flash"
+  ],
+  "bootstrap_iterations": 2000,
+  "seed": 20260930,
+  "source": "artifacts/elephant_syc/elephant_ab_full250_20260928"
+}

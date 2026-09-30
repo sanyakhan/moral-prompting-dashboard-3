@@ -7,6 +7,8 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
+import streamlit.components.v1 as components
+import streamlit.components.v2 as components_v2
 from plotly.subplots import make_subplots
 
 
@@ -16,6 +18,15 @@ COLLAPSED_RESULTS_PATH = ROOT / "output" / "analysis" / "bootstrap_collapsed_res
 DEO_CELL_PATH = ROOT / "output" / "analysis" / "iteration2_figure1_condition_cells.csv"
 ELEPHANT_CELL_PATH = ROOT / "output" / "analysis" / "iteration2_elephant_condition_cells.csv"
 ELEPHANT_ROLE_PATH = ROOT / "output" / "analysis" / "iteration2_elephant_role_direction.csv"
+ELEPHANT2_SUMMARIES_PATH = ROOT / "output" / "analysis" / "elephant2_collapsed_summaries.csv"
+ELEPHANT2_CELL_PATH = ROOT / "output" / "analysis" / "elephant2_condition_cells.csv"
+ELEPHANT2_ROLE_PATH = ROOT / "output" / "analysis" / "elephant2_role_direction.csv"
+ROLE_CONFLICT_SUMMARIES_PATH = ROOT / "output" / "analysis" / "role_conflict_collapsed_summaries.csv"
+ROLE_CONFLICT_CELL_PATH = ROOT / "output" / "analysis" / "role_conflict_condition_cells.csv"
+ROLE_CONFLICT_ROLE_PATH = ROOT / "output" / "analysis" / "role_conflict_role_direction.csv"
+REALISM_LABELS_PATH = ROOT / "output" / "analysis" / "realism_labels.csv"
+ELEPHANT_SCENARIO_PATH = ROOT / "output" / "analysis" / "elephant2_prompt_conditions.csv"
+ROLE_CONFLICT_SCENARIO_PATH = ROOT / "output" / "analysis" / "role_conflict_prompt_conditions.csv"
 DEO_PARTS_DIR = ROOT / "prompts" / "deo_consq" / "parts"
 ELEPHANT_PROMPT_DIR = ROOT / "prompts" / "elephant_syc"
 AIRISK_ALL_USER = (
@@ -76,6 +87,10 @@ OVERALL_RESULTS = pd.DataFrame(
         "DEO/ConSQ utility choice": [39.1, 95.2, 53.4, 48.5, 69.8],
         "Elephant sycophancy": [15.2, 13.9, 11.8, 7.7, 28.5],
     }
+)
+
+AIRISK_VARIATION = dict(
+    zip(MODEL_COLORS, [0.29, 0.34, 2.10, 0.95, 0.80], strict=True)
 )
 
 AIRISK_LABELS = [
@@ -178,6 +193,139 @@ TARGET_LABELS = {
     "llm": "LLM",
     "difuser": "Different user",
 }
+
+REALISM_GRID_HTML = """
+<div class="realism-grid-shell">
+  <div class="grid-panel">
+    <div class="axis-title" id="column-title"></div>
+    <div class="grid" id="grid"></div>
+    <div class="axis-title bottom" id="row-title"></div>
+    <div class="legend">
+      <span><i class="swatch feasible"></i>Feasible</span>
+      <span><i class="swatch not-feasible"></i>Not feasible</span>
+    </div>
+    <button class="apply-button" id="apply-selections" type="button">Apply selections</button>
+  </div>
+  <div class="preview">
+    <div class="preview-title" id="preview-title"></div>
+    <div class="preview-sub" id="preview-sub"></div>
+    <div class="prompt-label">System prompt</div><pre id="system-prompt"></pre>
+    <div class="prompt-label">User prompt</div><pre id="user-prompt"></pre>
+  </div>
+</div>
+"""
+
+REALISM_GRID_CSS = """
+* { box-sizing: border-box; }
+.realism-grid-shell { display: grid; grid-template-columns: minmax(220px, 280px) 1fr; gap: 10px; color: var(--st-text-color); font-family: var(--st-font); }
+.grid-panel, .preview { border: 1px solid var(--st-border-color); border-radius: 6px; padding: 10px; background: var(--st-background-color); }
+.axis-title { color: var(--st-secondary-text-color); font-size: 11px; font-weight: 700; margin-bottom: 6px; }
+.axis-title.bottom { margin: 10px 0 0; }
+.grid { display: grid; gap: 5px; }
+.label { min-height: 28px; display: flex; align-items: center; justify-content: center; color: var(--st-secondary-text-color); font-size: 10px; font-weight: 700; text-align: center; line-height: 1.15; }
+.row-label { justify-content: flex-start; }
+.cell { aspect-ratio: 1; border: 1px solid var(--st-border-color); border-radius: 4px; cursor: pointer; transition: 120ms ease; }
+.cell:hover, .cell:focus, .cell.active { outline: none; transform: translateY(-1px); box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--st-primary-color) 30%, transparent); }
+.cell.feasible { background: #d9f3e8; border-color: #168f84; }
+.cell.not-feasible { background: #fde2dd; border-color: #dd5a48; }
+.cell.unavailable { background: var(--st-secondary-background-color); }
+.cell:disabled { opacity: .35; cursor: not-allowed; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-top: 12px; font-size: 10px; color: var(--st-secondary-text-color); }
+.legend span { display: inline-flex; align-items: center; gap: 4px; }
+.swatch { width: 10px; height: 10px; border-radius: 2px; border: 1px solid var(--st-border-color); }
+.swatch.feasible { background: #d9f3e8; border-color: #168f84; }
+.swatch.not-feasible { background: #fde2dd; border-color: #dd5a48; }
+.apply-button { width: 100%; margin-top: 12px; border: 0; border-radius: 5px; padding: 8px 10px; background: var(--st-primary-color); color: white; font: 700 11px/1 var(--st-font); cursor: pointer; }
+.apply-button:hover, .apply-button:focus { filter: brightness(.94); outline: 2px solid color-mix(in srgb, var(--st-primary-color) 30%, transparent); outline-offset: 2px; }
+.preview-title { font-size: 14px; font-weight: 800; margin-bottom: 2px; }
+.preview-sub { color: var(--st-secondary-text-color); font-size: 10px; margin-bottom: 8px; }
+.prompt-label { color: var(--st-secondary-text-color); font-size: 9px; font-weight: 800; text-transform: uppercase; margin: 8px 0 4px; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; border: 1px solid var(--st-border-color); background: var(--st-secondary-background-color); border-radius: 5px; padding: 8px; color: var(--st-text-color); font: 10px/1.35 ui-monospace, SFMono-Regular, Menlo, monospace; max-height: 170px; overflow: auto; }
+@media (max-width: 720px) { .realism-grid-shell { grid-template-columns: 1fr; } }
+"""
+
+REALISM_GRID_JS = """
+export default function(component) {
+  const { data, parentElement, setStateValue } = component
+  const rows = data.rows || []
+  const rowLabels = data.rowLabels || {}
+  const columnLabels = data.columnLabels || {}
+  const rowKeys = Object.keys(rowLabels)
+  const columnKeys = Object.keys(columnLabels)
+  const labels = {...(data.labels || {})}
+  const shell = parentElement.querySelector(".realism-grid-shell")
+  const grid = parentElement.querySelector("#grid")
+  const applyButton = parentElement.querySelector("#apply-selections")
+  ;["pointerdown", "mousedown", "click"].forEach(eventName => {
+    shell.addEventListener(eventName, event => {
+      if (!event.target.closest("#apply-selections")) event.stopPropagation()
+    })
+  })
+  grid.innerHTML = ""
+  grid.style.gridTemplateColumns = `48px repeat(${columnKeys.length}, minmax(42px, 54px))`
+  parentElement.querySelector("#column-title").textContent = `${data.columnAxisTitle} →`
+  parentElement.querySelector("#row-title").textContent = `${data.rowAxisTitle} ↓`
+  const byCell = new Map(rows.map(row => [`${row.rowKey}::${row.colKey}`, row]))
+  function addLabel(text, extra = "") {
+    const node = document.createElement("div"); node.className = `label ${extra}`; node.textContent = text; grid.appendChild(node)
+  }
+  function updatePreview(item, button) {
+    if (!item) return
+    parentElement.querySelectorAll(".cell").forEach(cell => cell.classList.remove("active"))
+    if (button) button.classList.add("active")
+    parentElement.querySelector("#preview-title").textContent = item.title
+    parentElement.querySelector("#preview-sub").textContent = `${item.subtitle} · ${labels[item.condition] || "Not feasible"}`
+    parentElement.querySelector("#system-prompt").textContent = item.systemPrompt || "(empty)"
+    parentElement.querySelector("#user-prompt").textContent = item.userPrompt || "(empty)"
+  }
+  function applyState(button, condition) {
+    const value = labels[condition] === "Feasible" ? "Feasible" : "Not feasible"
+    button.className = `cell ${value === "Feasible" ? "feasible" : "not-feasible"}`
+    button.title = `${condition}: ${value}`
+  }
+  addLabel(""); columnKeys.forEach(key => addLabel(columnLabels[key]))
+  let firstItem = null; let firstButton = null
+  rowKeys.forEach(rowKey => {
+    addLabel(rowLabels[rowKey], "row-label")
+    columnKeys.forEach(columnKey => {
+      const item = byCell.get(`${rowKey}::${columnKey}`)
+      const button = document.createElement("button"); button.type = "button"
+      if (!item) { button.className = "cell unavailable"; button.disabled = true }
+      else {
+        applyState(button, item.condition)
+        button.setAttribute("aria-label", `${item.title}: ${labels[item.condition] || "Not feasible"}`)
+        button.onmouseenter = () => updatePreview(item, button)
+        button.onfocus = () => updatePreview(item, button)
+        button.onclick = () => {
+          if (labels[item.condition] === "Feasible") labels[item.condition] = "Not feasible"
+          else labels[item.condition] = "Feasible"
+          applyState(button, item.condition)
+          button.setAttribute("aria-label", `${item.title}: ${labels[item.condition]}`)
+          updatePreview(item, button)
+        }
+        if (!firstItem) { firstItem = item; firstButton = button }
+      }
+      grid.appendChild(button)
+    })
+  })
+  let applied = false
+  const applySelections = () => {
+    if (applied) return
+    applied = true
+    setStateValue("labels", {...labels})
+  }
+  applyButton.onpointerdown = applySelections
+  applyButton.onclick = applySelections
+  if (firstItem) updatePreview(firstItem, firstButton)
+}
+"""
+
+REALISM_GRID_COMPONENT = components_v2.component(
+    "realism_prompt_grid",
+    html=REALISM_GRID_HTML,
+    css=REALISM_GRID_CSS,
+    js=REALISM_GRID_JS,
+)
 
 
 def image_path(name: str) -> Path:
@@ -317,6 +465,7 @@ def airisk_prompt_payload() -> list[dict[str, str]]:
                     row.get("user_prompt"),
                     clean_prompt_value(row.get("full_user_prompt")),
                 ),
+                "dilemma": clean_prompt_value(row.get("dilemma")),
             }
         )
     return rows
@@ -410,7 +559,7 @@ def render_hover_prompt_grid(
     if (rows.length && firstButton) update(rows[0], firstButton);
     </script>
     """
-    st.iframe(component_html, height=610, width="stretch")
+    components.html(component_html, height=610, scrolling=False)
 
 
 def render_prompt_explorer(benchmark: str) -> None:
@@ -429,7 +578,6 @@ def render_prompt_explorer(benchmark: str) -> None:
         default="All-user",
         key=f"{benchmark}_prompt_placement",
         width="stretch",
-        wrap=True,
     )
     placement = PROMPT_PLACEMENTS[placement_label]
     payload = (
@@ -449,29 +597,199 @@ def render_prompt_explorer(benchmark: str) -> None:
 @st.cache_data(show_spinner=False)
 def collapsed_summaries() -> pd.DataFrame:
     data = json.loads(COLLAPSED_RESULTS_PATH.read_text())
-    return pd.DataFrame(data["summaries"])
+    return pd.concat(
+        [
+            pd.DataFrame(data["summaries"]),
+            pd.read_csv(ELEPHANT2_SUMMARIES_PATH),
+            pd.read_csv(ROLE_CONFLICT_SUMMARIES_PATH),
+        ],
+        ignore_index=True,
+    )
 
 
 @st.cache_data(show_spinner=False)
 def condition_cells(dataset: str) -> pd.DataFrame:
-    path = DEO_CELL_PATH if dataset == "DEO/ConSQ" else ELEPHANT_CELL_PATH
+    paths = {
+        "DEO/ConSQ": DEO_CELL_PATH,
+        "Elephant": ELEPHANT_CELL_PATH,
+        "Elephant 2": ELEPHANT2_CELL_PATH,
+        "Role Conflict": ROLE_CONFLICT_CELL_PATH,
+    }
+    path = paths[dataset]
     return pd.read_csv(path)
+
+
+@st.cache_data(show_spinner=False)
+def variation_results() -> pd.DataFrame:
+    rows = []
+    for dataset in ("DEO/ConSQ", "Elephant", "Elephant 2", "Role Conflict"):
+        cells = condition_cells(dataset)
+        standard_deviations = cells.groupby("model")[value_column(dataset)].std()
+        benchmark = "Elephant 1" if dataset == "Elephant" else dataset
+        for model in MODEL_COLORS:
+            rows.append(
+                {
+                    "Model": model,
+                    "Benchmark": benchmark,
+                    "SD": f"{standard_deviations[model]:.2f} pp",
+                }
+            )
+    for model, standard_deviation in AIRISK_VARIATION.items():
+        rows.append(
+            {
+                "Model": model,
+                "Benchmark": "AIRiskDilemmas",
+                "SD": f"{standard_deviation:.2f} ranks",
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+@st.cache_data(show_spinner=False)
+def realism_prompt_conditions(benchmark: str) -> pd.DataFrame:
+    if benchmark in {"Elephant 2", "Role Conflict"}:
+        path = ELEPHANT_SCENARIO_PATH if benchmark == "Elephant 2" else ROLE_CONFLICT_SCENARIO_PATH
+        data = pd.read_csv(path).drop_duplicates("condition")
+        rows = []
+        for row in data.itertuples(index=False):
+            condition = str(row.condition)
+            if condition.endswith("_s_framing_output"):
+                placement = "System framing + output"
+            elif condition.endswith("_s_framing"):
+                placement = "System framing"
+            else:
+                placement = "All-user"
+            if benchmark == "Elephant 2":
+                user_prompt = "\n\n".join(
+                    part
+                    for part in (
+                        clean_prompt_value(getattr(row, "user_prefix", "")),
+                        clean_prompt_value(getattr(row, "user_suffix", "")),
+                    )
+                    if part
+                )
+            else:
+                framing = clean_prompt_value(getattr(row, "framing", ""))
+                output = clean_prompt_value(getattr(row, "output_instruction", ""))
+                if placement == "All-user":
+                    user_prompt = "\n\n".join([framing, output])
+                elif placement == "System framing":
+                    user_prompt = output
+                else:
+                    user_prompt = "(dilemma omitted)"
+            rows.append(
+                {
+                    "benchmark": benchmark,
+                    "condition": condition,
+                    "placement": placement,
+                    "system_prompt": clean_prompt_value(getattr(row, "system_prompt", ""), "(empty)"),
+                    "user_prompt": user_prompt or "(dilemma omitted)",
+                }
+            )
+        return pd.DataFrame(rows)
+
+    if benchmark == "AIRiskDilemmas":
+        return pd.DataFrame(
+            [
+                {
+                    "benchmark": benchmark,
+                    "condition": f"{row['rowKey']}__{row['colKey']}",
+                    "placement": next(
+                        label for label, key in PROMPT_PLACEMENTS.items()
+                        if key == row["colKey"]
+                    ),
+                    "system_prompt": row["systemPrompt"],
+                    "user_prompt": (
+                        row["userPrompt"].replace(row["dilemma"], "(dilemma omitted)")
+                        if row.get("dilemma")
+                        else row["userPrompt"]
+                    ),
+                }
+                for row in airisk_prompt_payload()
+            ]
+        )
+
+    payload_builder = deo_prompt_payload if benchmark == "DEO/ConSQ" else elephant_prompt_payload
+    rows = []
+    suffixes = {
+        "all_user": "",
+        "system_framing": "_s_framing",
+        "system_framing_output": "_s_framing_output",
+    }
+    for placement_label, placement in PROMPT_PLACEMENTS.items():
+        for row in payload_builder(placement):
+            rows.append(
+                {
+                    "benchmark": benchmark,
+                    "condition": f"{row['colKey']}_{row['rowKey']}{suffixes[placement]}",
+                    "placement": placement_label,
+                    "system_prompt": row["systemPrompt"],
+                    "user_prompt": (
+                        row["userPrompt"]
+                        .replace("[Elephant scenario]", "(dilemma omitted)")
+                        .replace("[DEO/ConSQ dilemma]", "(dilemma omitted)")
+                    ),
+                }
+            )
+    return pd.DataFrame(rows)
+
+
+def load_realism_labels() -> pd.DataFrame:
+    columns = ["benchmark", "condition", "realism"]
+    if not REALISM_LABELS_PATH.exists():
+        return pd.DataFrame(columns=columns)
+    labels = pd.read_csv(REALISM_LABELS_PATH, dtype=str).fillna("")
+    return labels.reindex(columns=columns, fill_value="")
+
+
+def save_realism_labels(edited: pd.DataFrame) -> None:
+    saved = load_realism_labels()
+    labels = {
+        (row.benchmark, row.condition): row.realism
+        for row in saved.itertuples(index=False)
+    }
+    for row in edited.itertuples(index=False):
+        key = (str(row.benchmark), str(row.condition))
+        if row.realism == "Feasible":
+            labels[key] = row.realism
+        else:
+            labels.pop(key, None)
+    combined = pd.DataFrame(
+        [
+            {"benchmark": benchmark, "condition": condition, "realism": realism}
+            for (benchmark, condition), realism in sorted(labels.items())
+        ],
+        columns=["benchmark", "condition", "realism"],
+    )
+    REALISM_LABELS_PATH.parent.mkdir(parents=True, exist_ok=True)
+    combined.to_csv(REALISM_LABELS_PATH, index=False)
 
 
 def outcome_label(dataset: str) -> str:
     if dataset == "DEO/ConSQ":
         return "Percent choosing the higher-utility option"
+    if dataset == "Role Conflict":
+        return "Percent choosing the higher-urgency role"
     return "Percent sycophantic responses"
+
+
+def value_column(dataset: str) -> str:
+    if dataset == "DEO/ConSQ":
+        return "utility_percent"
+    if dataset == "Role Conflict":
+        return "urgency_correct_percent"
+    return "sycophancy_percent"
 
 
 def finish_percent_chart(
     figure: go.Figure,
     *,
     height: int = 510,
+    y_min: float = 0,
     y_max: float = 105,
 ) -> go.Figure:
     figure.update_yaxes(
-        range=[0, y_max],
+        range=[y_min, y_max],
         tickformat=".0f",
         ticksuffix="%",
         gridcolor="#e3e9f0",
@@ -505,6 +823,7 @@ def collapsed_category_chart(
     view: str,
     categories: list[str],
     labels: list[str],
+    y_min: float = 0,
     y_max: float = 105,
 ) -> go.Figure:
     summaries = collapsed_summaries()
@@ -513,9 +832,7 @@ def collapsed_category_chart(
         & summaries["view"].eq(f"{view}_all_placements")
     ]
     cells = condition_cells(dataset)
-    value_column = (
-        "utility_percent" if dataset == "DEO/ConSQ" else "sycophancy_percent"
-    )
+    outcome_column = value_column(dataset)
     facet_columns = len(MODEL_COLORS)
     facet_rows = 1
     subplot_titles = [f"<b>{model}</b>" for model in MODEL_COLORS]
@@ -539,7 +856,7 @@ def collapsed_category_chart(
         for position, category, label in zip(category_positions, categories, labels):
             raw = model_cells.loc[
                 model_cells["owner" if view == "decision_owner" else "target"].eq(category),
-                value_column,
+                outcome_column,
             ].astype(float)
             jitter = np.linspace(-.11, .11, len(raw)) if len(raw) > 1 else np.zeros(len(raw))
             figure.add_trace(
@@ -604,7 +921,7 @@ def collapsed_category_chart(
         )
     figure.update_yaxes(title_text=outcome_label(dataset), row=1, col=1)
     figure.update_annotations(font={"size": 11, "color": "#172235"})
-    return finish_percent_chart(figure, height=500, y_max=y_max)
+    return finish_percent_chart(figure, height=500, y_min=y_min, y_max=y_max)
 
 
 def expanded_category_chart(
@@ -619,9 +936,7 @@ def expanded_category_chart(
         summaries["dataset"].eq(dataset) & summaries["view"].eq(view)
     ]
     cells = condition_cells(dataset)
-    value_column = (
-        "utility_percent" if dataset == "DEO/ConSQ" else "sycophancy_percent"
-    )
+    outcome_column = value_column(dataset)
     facet_columns = len(MODEL_COLORS)
     facet_rows = 1
     subplot_titles = [f"<b>{model}</b>" for model in MODEL_COLORS]
@@ -663,7 +978,7 @@ def expanded_category_chart(
                     & model_cells[
                         "owner" if view == "decision_owner" else "target"
                     ].eq(category),
-                    value_column,
+                    outcome_column,
                 ].astype(float)
                 range_low.append(float(raw.min()))
                 range_high.append(float(raw.max()))
@@ -716,15 +1031,17 @@ def expanded_category_chart(
     return finish_percent_chart(figure, height=510, y_max=y_max)
 
 
-def placement_overview_chart(dataset: str, y_max: float = 105) -> go.Figure:
+def placement_overview_chart(
+    dataset: str,
+    y_min: float = 0,
+    y_max: float = 105,
+) -> go.Figure:
     summaries = collapsed_summaries()
     rows = summaries.loc[
         summaries["dataset"].eq(dataset) & summaries["view"].eq("placement")
     ]
     cells = condition_cells(dataset)
-    value_column = (
-        "utility_percent" if dataset == "DEO/ConSQ" else "sycophancy_percent"
-    )
+    outcome_column = value_column(dataset)
     figure = make_subplots(
         rows=1,
         cols=len(MODEL_COLORS),
@@ -745,7 +1062,7 @@ def placement_overview_chart(dataset: str, y_max: float = 105) -> go.Figure:
         for position, placement in zip(positions, PLACEMENT_LABELS):
             raw = model_cells.loc[
                 model_cells["placement"].eq(placement_values[placement]),
-                value_column,
+                outcome_column,
             ].astype(float)
             jitter = np.linspace(-.1, .1, len(raw)) if len(raw) > 1 else np.zeros(len(raw))
             figure.add_trace(
@@ -813,7 +1130,7 @@ def placement_overview_chart(dataset: str, y_max: float = 105) -> go.Figure:
         )
     figure.update_yaxes(title_text=outcome_label(dataset), row=1, col=1)
     figure.update_annotations(font={"size": 11, "color": "#172235"})
-    return finish_percent_chart(figure, height=500, y_max=y_max)
+    return finish_percent_chart(figure, height=500, y_min=y_min, y_max=y_max)
 
 
 @st.cache_data(show_spinner=False)
@@ -842,7 +1159,13 @@ def role_direction_rows(dataset: str) -> pd.DataFrame:
         for index, placement in enumerate(["all_user", "system_framing", "system_framing_output"]):
             result[placement] = result["model"].map(lambda model: placement_points[model][index])
         return result
-    return pd.read_csv(ELEPHANT_ROLE_PATH)
+    paths = {
+        "Elephant": ELEPHANT_ROLE_PATH,
+        "Elephant 2": ELEPHANT2_ROLE_PATH,
+        "Role Conflict": ROLE_CONFLICT_ROLE_PATH,
+    }
+    path = paths[dataset]
+    return pd.read_csv(path)
 
 
 def role_direction_chart(dataset: str) -> go.Figure:
@@ -898,10 +1221,34 @@ def role_direction_chart(dataset: str) -> go.Figure:
     low = min(rows["ci_low"].min(), rows[["all_user", "system_framing", "system_framing_output"]].min().min())
     high = max(rows["ci_high"].max(), rows[["all_user", "system_framing", "system_framing_output"]].max().max())
     padding = max(3, (high - low) * .12)
+    direction_prefix = {
+        "DEO/ConSQ": "Higher utility choices",
+        "Role Conflict": "Higher urgency-correct choices",
+    }.get(dataset, "Higher sycophancy")
     figure.add_vline(x=0, line_color="#7b8798", line_width=2)
+    figure.add_annotation(
+        x=0,
+        y=-.18,
+        xref="paper",
+        yref="paper",
+        text=f"{direction_prefix} when SDC is target / user is owner",
+        showarrow=False,
+        xanchor="left",
+        font={"size": 11, "color": "#63758e"},
+    )
+    figure.add_annotation(
+        x=1,
+        y=-.18,
+        xref="paper",
+        yref="paper",
+        text=f"{direction_prefix} when user is target / SDC is owner",
+        showarrow=False,
+        xanchor="right",
+        font={"size": 11, "color": "#63758e"},
+    )
     figure.update_layout(
         height=500,
-        margin={"l": 150, "r": 35, "t": 25, "b": 55},
+        margin={"l": 150, "r": 35, "t": 25, "b": 85},
         xaxis={
             "title": "Percentage-point difference",
             "range": [low - padding, high + padding],
@@ -918,8 +1265,13 @@ def role_direction_chart(dataset: str) -> go.Figure:
     return figure
 
 
-def overall_vertical_chart(dataset: str, y_max: float = 105) -> go.Figure:
-    value_column = "utility_percent" if dataset == "DEO/ConSQ" else "sycophancy_percent"
+def overall_vertical_chart(
+    dataset: str,
+    y_min: float = 0,
+    y_max: float = 105,
+    height: int = 540,
+) -> go.Figure:
+    outcome_column = value_column(dataset)
     summaries = collapsed_summaries()
     summaries = summaries.loc[
         summaries["dataset"].eq(dataset) & summaries["view"].eq("model_overall")
@@ -928,7 +1280,7 @@ def overall_vertical_chart(dataset: str, y_max: float = 105) -> go.Figure:
 
     figure = go.Figure()
     for model, color in MODEL_COLORS.items():
-        model_cells = cells.loc[cells["model"].eq(model), value_column].dropna()
+        model_cells = cells.loc[cells["model"].eq(model), outcome_column].dropna()
         figure.add_trace(
             go.Box(
                 x=[model] * len(model_cells),
@@ -982,7 +1334,130 @@ def overall_vertical_chart(dataset: str, y_max: float = 105) -> go.Figure:
         ticktext=list(MODEL_TICK_LABELS.values()),
         tickangle=0,
     )
-    return finish_percent_chart(figure, height=540, y_max=y_max)
+    return finish_percent_chart(figure, height=height, y_min=y_min, y_max=y_max)
+
+
+def airisk_overall_chart() -> go.Figure:
+    figure = go.Figure()
+    for model, color in MODEL_COLORS.items():
+        matrix = np.asarray(AIRISK_MATRICES[model], dtype=float)
+        mean_rho = matrix[~np.eye(matrix.shape[0], dtype=bool)].mean()
+        figure.add_trace(
+            go.Scatter(
+                x=[model],
+                y=[mean_rho],
+                mode="markers",
+                marker={"size": 13, "color": "white", "line": {"color": color, "width": 4}},
+                hovertemplate=f"{model}<br>Mean pairwise rho: {mean_rho:.3f}<extra></extra>",
+                showlegend=False,
+            )
+        )
+    figure.update_xaxes(
+        tickmode="array",
+        tickvals=list(MODEL_COLORS),
+        ticktext=list(MODEL_TICK_LABELS.values()),
+        showgrid=False,
+        title=None,
+    )
+    figure.update_yaxes(
+        range=[.70, 1.01],
+        tickformat=".2f",
+        title="Mean pairwise Spearman rho",
+        gridcolor="#e3e9f0",
+        zeroline=False,
+    )
+    figure.update_layout(
+        height=420,
+        margin={"l": 66, "r": 12, "t": 30, "b": 42},
+        paper_bgcolor="white",
+        plot_bgcolor="white",
+        font={"color": "#172235", "size": 12},
+    )
+    return figure
+
+
+def model_benchmark_overall_chart() -> go.Figure:
+    datasets = ["DEO/ConSQ", "Elephant 2", "Role Conflict"]
+    labels = ["DEO/<br>ConSQ", "Elephant<br>2", "Role<br>conflict"]
+    summaries = collapsed_summaries()
+    summaries = summaries.loc[
+        summaries["dataset"].isin(datasets) & summaries["view"].eq("model_overall")
+    ]
+    figure = make_subplots(
+        rows=1,
+        cols=len(MODEL_COLORS),
+        shared_yaxes=True,
+        horizontal_spacing=.035,
+        subplot_titles=[f"<b>{model}</b>" for model in MODEL_COLORS],
+    )
+    for column, (model, color) in enumerate(MODEL_COLORS.items(), start=1):
+        model_rows = summaries.loc[summaries["model"].eq(model)].set_index("dataset").loc[datasets]
+        for benchmark_index, dataset in enumerate(datasets):
+            cells = condition_cells(dataset)
+            cells = cells.loc[cells["model"].eq(model)].reset_index(drop=True)
+            rng = np.random.default_rng(1000 * column + benchmark_index)
+            jitter = rng.uniform(-.15, .15, len(cells))
+            figure.add_trace(
+                go.Scatter(
+                    x=benchmark_index + jitter,
+                    y=cells[value_column(dataset)],
+                    mode="markers",
+                    marker={"size": 6, "color": color, "opacity": .22},
+                    customdata=np.column_stack(
+                        [cells["condition_base"], cells["placement"]]
+                    ),
+                    hovertemplate=(
+                        f"{labels[benchmark_index]}"
+                        "<br>Condition: %{customdata[0]}"
+                        "<br>Placement: %{customdata[1]}"
+                        "<br>Outcome: %{y:.1f}%<extra></extra>"
+                    ),
+                    showlegend=False,
+                ),
+                row=1,
+                col=column,
+            )
+        figure.add_trace(
+            go.Scatter(
+                x=list(range(len(datasets))),
+                y=model_rows["estimate"],
+                mode="markers",
+                marker={"size": 10, "color": "white", "line": {"color": color, "width": 3}},
+                error_y={
+                    "type": "data",
+                    "symmetric": False,
+                    "array": model_rows["ci_high"] - model_rows["estimate"],
+                    "arrayminus": model_rows["estimate"] - model_rows["ci_low"],
+                    "color": color,
+                    "thickness": 2,
+                    "width": 4,
+                },
+                customdata=np.column_stack([model_rows["ci_low"], model_rows["ci_high"]]),
+                hovertemplate=(
+                    "Overall: %{y:.1f}%"
+                    "<br>95% CI: %{customdata[0]:.1f}% to %{customdata[1]:.1f}%"
+                    "<extra></extra>"
+                ),
+                showlegend=False,
+            ),
+            row=1,
+            col=column,
+        )
+        figure.update_xaxes(
+            tickmode="array",
+            tickvals=list(range(len(datasets))),
+            ticktext=labels,
+            tickangle=0,
+            automargin=True,
+            range=[-.45, len(datasets) - .55],
+            row=1,
+            col=column,
+        )
+    figure.update_yaxes(title_text="Overall outcome", row=1, col=1)
+    figure.update_annotations(font={"size": 11, "color": "#172235"})
+    figure = finish_percent_chart(figure, height=520, y_max=105)
+    figure.update_layout(margin={"l": 66, "r": 12, "t": 48, "b": 76})
+    return figure
 
 
 def airisk_heatmap(model: str) -> go.Figure:
@@ -1048,7 +1523,6 @@ def render_deo() -> None:
         default="Decision owner",
         key="deo_view",
         width="stretch",
-        wrap=True,
     )
     if view == "Overall":
         st.plotly_chart(overall_vertical_chart("DEO/ConSQ"), width="stretch", theme=None)
@@ -1099,33 +1573,45 @@ def render_deo() -> None:
     elif view == "Placement":
         st.plotly_chart(placement_overview_chart("DEO/ConSQ"), width="stretch", theme=None)
     else:
+        st.caption(
+            "Difference = user target / SDC owner minus SDC target / user owner; "
+            "all prompt placements pooled."
+        )
         st.plotly_chart(role_direction_chart("DEO/ConSQ"), width="stretch", theme=None)
 
 
-def render_elephant(y_axis_max: float = 40) -> None:
-    st.header("Elephant")
-    st.caption("Outcome: percentage of sycophantic responses. Lower is less sycophantic.")
+def render_elephant(
+    y_axis_max: float = 40,
+    *,
+    y_axis_min: float = 0,
+    dataset: str = "Elephant",
+    title: str = "Elephant",
+    key_prefix: str = "elephant",
+    caption: str = "Outcome: percentage of sycophantic responses. Lower is less sycophantic.",
+) -> None:
+    st.header(title)
+    st.caption(caption)
     view = st.segmented_control(
-        "Elephant view",
+        f"{title} view",
         ["Overall", "Decision owner", "Target identity", "Placement", "Role direction"],
         default="Overall",
-        key="elephant_view",
+        key=f"{key_prefix}_view",
         width="stretch",
-        wrap=True,
     )
     if view == "Overall":
         st.plotly_chart(
-            overall_vertical_chart("Elephant", y_max=y_axis_max),
+            overall_vertical_chart(dataset, y_min=y_axis_min, y_max=y_axis_max),
             width="stretch",
             theme=None,
         )
     elif view == "Decision owner":
         st.plotly_chart(
             collapsed_category_chart(
-                "Elephant",
+                dataset,
                 "decision_owner",
                 ["user", "sdc", "llm"],
                 ["User", "AI agent", "LLM"],
+                y_min=y_axis_min,
                 y_max=y_axis_max,
             ),
             width="stretch",
@@ -1134,10 +1620,11 @@ def render_elephant(y_axis_max: float = 40) -> None:
     elif view == "Target identity":
         st.plotly_chart(
             collapsed_category_chart(
-                "Elephant",
+                dataset,
                 "target_actor",
                 ["user", "sdc", "llm", "difuser"],
                 ["User", "AI agent", "LLM*", "Different user"],
+                y_min=y_axis_min,
                 y_max=y_axis_max,
             ),
             width="stretch",
@@ -1145,12 +1632,16 @@ def render_elephant(y_axis_max: float = 40) -> None:
         )
     elif view == "Placement":
         st.plotly_chart(
-            placement_overview_chart("Elephant", y_max=y_axis_max),
+            placement_overview_chart(dataset, y_min=y_axis_min, y_max=y_axis_max),
             width="stretch",
             theme=None,
         )
     else:
-        st.plotly_chart(role_direction_chart("Elephant"), width="stretch", theme=None)
+        st.caption(
+            "Difference = user target / SDC owner minus SDC target / user owner; "
+            "all experimental prompt placements pooled."
+        )
+        st.plotly_chart(role_direction_chart(dataset), width="stretch", theme=None)
 
 
 def render_airisk_prompt_study() -> None:
@@ -1209,7 +1700,6 @@ def render_airisk_published_figures() -> None:
         default="Model rankings",
         key="airisk_paper_figure",
         width="stretch",
-        wrap=True,
     )
     figures = {
         "Stated vs revealed": (
@@ -1247,6 +1737,321 @@ def render_airisk() -> None:
     render_airisk_prompt_study()
 
 
+def render_variance() -> None:
+    st.header("Variation across settings")
+    st.caption(
+        "SD across the 30 prompt-condition cells for percentage benchmarks. "
+        "AIRiskDilemmas is reported in rank units and is not directly comparable."
+    )
+    st.dataframe(variation_results(), hide_index=True, width="stretch")
+
+
+def render_realism_classifier(benchmark: str) -> None:
+    st.caption(
+        "Hover to inspect a prompt. Click a box to mark it Feasible; click again to clear it. "
+        "Unselected boxes are assumed Not feasible. Each choice applies across all prompt "
+        "placements. Apply the selections when you are finished."
+    )
+    prompts = realism_prompt_conditions(benchmark)
+    labels = load_realism_labels()
+    benchmark_labels = labels.loc[labels["benchmark"].eq(benchmark)]
+    label_map = {
+        row.condition: "Feasible"
+        for row in benchmark_labels.itertuples(index=False)
+        if row.realism == "Feasible"
+    }
+    box_count = int(prompts["placement"].eq("All-user").sum())
+    st.caption(
+        f"Feasible {len(label_map)} · Not feasible {max(0, box_count - len(label_map))}"
+    )
+    if benchmark == "AIRiskDilemmas":
+        visible = prompts.loc[prompts["placement"].eq("All-user")]
+        row_labels = OWNER_LABELS
+        column_labels = {"sdc": TARGET_LABELS["sdc"]}
+        row_axis_title, column_axis_title = "Decision owner", "Target identity"
+        component_rows = []
+        for row in visible.itertuples(index=False):
+            owner, _ = row.condition.split("__", 1)
+            condition = f"sdc_{owner}"
+            component_rows.append(
+                {
+                    "rowKey": owner,
+                    "colKey": "sdc",
+                    "condition": condition,
+                    "title": f"{OWNER_LABELS[owner]} owner × AI agent target",
+                    "subtitle": "All three prompt placements included",
+                    "systemPrompt": row.system_prompt,
+                    "userPrompt": row.user_prompt,
+                }
+            )
+    else:
+        visible = prompts.loc[prompts["placement"].eq("All-user")]
+        row_labels, column_labels = OWNER_LABELS, TARGET_LABELS
+        row_axis_title, column_axis_title = "Decision owner", "Target identity"
+        component_rows = []
+        for row in visible.itertuples(index=False):
+            condition_base = row.condition
+            for suffix in ("_s_framing_output", "_s_framing"):
+                condition_base = condition_base.removesuffix(suffix)
+            target, owner = condition_base.split("_", 1)
+            component_rows.append(
+                {
+                    "rowKey": owner,
+                    "colKey": target,
+                    "condition": condition_base,
+                    "title": f"{OWNER_LABELS[owner]} owner × {TARGET_LABELS[target]} target",
+                    "subtitle": "All three prompt placements included",
+                    "systemPrompt": row.system_prompt,
+                    "userPrompt": row.user_prompt,
+                }
+            )
+
+    result = REALISM_GRID_COMPONENT(
+        data={
+            "rows": component_rows,
+            "rowLabels": row_labels,
+            "columnLabels": column_labels,
+            "rowAxisTitle": row_axis_title,
+            "columnAxisTitle": column_axis_title,
+            "labels": label_map,
+        },
+        key=f"realism_grid_{benchmark}",
+        width="stretch",
+        height=430,
+        on_labels_change=lambda: None,
+    )
+    next_labels = getattr(result, "labels", None)
+    if isinstance(next_labels, dict) and next_labels != label_map:
+        edited = pd.DataFrame(
+            [
+                {"benchmark": benchmark, "condition": condition, "realism": realism}
+                for condition, realism in next_labels.items()
+            ]
+        )
+        save_realism_labels(edited)
+
+
+def realism_group_chart(benchmark: str) -> go.Figure | None:
+    saved_labels = load_realism_labels()
+    feasible = set(
+        saved_labels.loc[
+            saved_labels["benchmark"].eq(benchmark)
+            & saved_labels["realism"].eq("Feasible"),
+            "condition",
+        ]
+    )
+    prompts = realism_prompt_conditions(benchmark)
+    if benchmark == "AIRiskDilemmas":
+        condition_keys = [
+            f"sdc_{condition.split('__', 1)[0]}"
+            for condition in prompts.loc[prompts["placement"].eq("All-user"), "condition"]
+        ]
+    else:
+        condition_keys = prompts.loc[prompts["placement"].eq("All-user"), "condition"].tolist()
+    labels = pd.DataFrame(
+        {
+            "condition": condition_keys,
+            "realism": [
+                "Feasible" if condition in feasible else "Not feasible"
+                for condition in condition_keys
+            ],
+        }
+    )
+    if not feasible or labels["realism"].nunique() < 2:
+        return None
+
+    if benchmark == "AIRiskDilemmas":
+        condition_order = [
+            "user__all_user", "user__system_framing", "user__system_framing_output",
+            "sdc__all_user", "sdc__system_framing", "sdc__system_framing_output",
+            "llm__all_user", "llm__system_framing", "llm__system_framing_output",
+        ]
+        rows = []
+        for model, values in AIRISK_MATRICES.items():
+            matrix = np.asarray(values, dtype=float)
+            for index, condition in enumerate(condition_order):
+                mean_rho = np.delete(matrix[index], index).mean()
+                owner, _ = condition.split("__", 1)
+                rows.append(
+                    {
+                        "model": model,
+                        "condition": condition,
+                        "condition_key": f"sdc_{owner}",
+                        "value": mean_rho,
+                    }
+                )
+        cells = pd.DataFrame(rows)
+        y_title, y_range, suffix = "Mean similarity to other conditions", [.65, 1.01], ""
+    else:
+        dataset = "Elephant" if benchmark == "Elephant 1" else benchmark
+        cells = condition_cells(dataset).copy()
+        suffixes = {
+            "all_user": "",
+            "system_framing": "_s_framing",
+            "system_framing_output": "_s_framing_output",
+        }
+        cells["condition"] = cells["condition_base"] + cells["placement"].map(suffixes)
+        cells["condition_key"] = cells["condition_base"]
+        cells["value"] = cells[value_column(dataset)]
+        y_title, y_range, suffix = outcome_label(dataset), [0, 105], "%"
+
+    cells = cells.merge(
+        labels[["condition", "realism"]],
+        left_on="condition_key",
+        right_on="condition",
+        how="inner",
+        suffixes=("", "_label"),
+    )
+    groups = ["Feasible", "Not feasible"]
+    figure = make_subplots(
+        rows=1,
+        cols=len(MODEL_COLORS),
+        shared_yaxes=True,
+        horizontal_spacing=.035,
+        subplot_titles=[f"<b>{model}</b>" for model in MODEL_COLORS],
+    )
+    for column, (model, color) in enumerate(MODEL_COLORS.items(), start=1):
+        model_rows = cells.loc[cells["model"].eq(model)]
+        for group_index, group in enumerate(groups):
+            group_rows = model_rows.loc[model_rows["realism"].eq(group)]
+            if group_rows.empty:
+                continue
+            rng = np.random.default_rng(20261001 + 100 * column + group_index)
+            jitter = rng.uniform(-.12, .12, len(group_rows))
+            figure.add_trace(
+                go.Scatter(
+                    x=group_index + jitter,
+                    y=group_rows["value"],
+                    mode="markers",
+                    marker={"size": 7, "color": color, "opacity": .25},
+                    customdata=group_rows[["condition"]],
+                    hovertemplate=(
+                        "%{customdata[0]}<br>Outcome: %{y:.2f}" + suffix + "<extra></extra>"
+                    ),
+                    showlegend=False,
+                ),
+                row=1,
+                col=column,
+            )
+            values = group_rows["value"].to_numpy(dtype=float)
+            mean = values.mean()
+            if len(values) > 1:
+                samples = rng.choice(values, size=(2000, len(values)), replace=True).mean(axis=1)
+                low, high = np.quantile(samples, [.025, .975])
+            else:
+                low = high = mean
+            figure.add_trace(
+                go.Scatter(
+                    x=[group_index],
+                    y=[mean],
+                    mode="markers",
+                    marker={"size": 12, "color": "white", "line": {"color": color, "width": 4}},
+                    error_y={
+                        "type": "data",
+                        "symmetric": False,
+                        "array": [high - mean],
+                        "arrayminus": [mean - low],
+                        "color": color,
+                        "thickness": 2,
+                        "width": 4,
+                    },
+                    hovertemplate=(
+                        f"{group}<br>Mean: {mean:.2f}{suffix}"
+                        f"<br>95% CI: {low:.2f}{suffix} to {high:.2f}{suffix}<extra></extra>"
+                    ),
+                    showlegend=False,
+                ),
+                row=1,
+                col=column,
+            )
+        figure.update_xaxes(
+            tickmode="array",
+            tickvals=[0, 1],
+            ticktext=["Feasible", "Not<br>feasible"],
+            range=[-.45, 1.45],
+            row=1,
+            col=column,
+        )
+    figure.update_yaxes(title_text=y_title, row=1, col=1)
+    figure.update_annotations(font={"size": 11, "color": "#172235"})
+    figure.update_layout(margin={"l": 66, "r": 12, "t": 48, "b": 62})
+    if benchmark == "AIRiskDilemmas":
+        figure.update_yaxes(
+            range=y_range,
+            tickformat=".2f",
+            gridcolor="#e3e9f0",
+            zeroline=False,
+        )
+        figure.update_layout(height=510, paper_bgcolor="white", plot_bgcolor="white")
+        return figure
+    return finish_percent_chart(figure, height=510, y_min=y_range[0], y_max=y_range[1])
+
+
+def render_realism() -> None:
+    st.header("Realism")
+    st.caption(
+        "Compare model behavior across prompt conditions classified as feasible or not feasible. "
+        "The labels apply to prompt framing, not dilemma content."
+    )
+    realism_benchmarks = ["DEO/ConSQ", "Elephant 2", "Role Conflict"]
+    if st.session_state.get("realism_benchmark") not in realism_benchmarks:
+        st.session_state.realism_benchmark = "Elephant 2"
+    if st.session_state.get("realism_benchmark_choice") not in realism_benchmarks:
+        st.session_state.realism_benchmark_choice = st.session_state.realism_benchmark
+
+    def update_realism_benchmark() -> None:
+        st.session_state.realism_benchmark = st.session_state.realism_benchmark_choice
+
+    with st.popover(
+        f"Prompt classifier · {st.session_state.realism_benchmark}",
+        icon=":material/grid_view:",
+        width="stretch",
+    ):
+        st.segmented_control(
+            "Benchmark",
+            realism_benchmarks,
+            key="realism_benchmark_choice",
+            on_change=update_realism_benchmark,
+            width="stretch",
+        )
+        benchmark = st.session_state.realism_benchmark
+        render_realism_classifier(benchmark)
+
+    benchmark = st.session_state.realism_benchmark
+    figure = realism_group_chart(benchmark)
+    if figure is None:
+        st.info(
+            "Select at least one Feasible prompt to show the comparison; all remaining prompts "
+            "are treated as Not feasible."
+        )
+        return
+    st.subheader(benchmark)
+    st.caption(
+        "Faint dots are classified prompt conditions. Outlined points and whiskers are group "
+        "means and bootstrap 95% confidence intervals across conditions."
+    )
+    st.plotly_chart(figure, width="stretch", theme=None)
+
+
+
+def render_between_benchmarks() -> None:
+    st.header("All benchmark overalls")
+    st.caption(
+        "Percentage outcomes are pooled across all 30 prompt conditions. Outcome meaning "
+        "differs by benchmark, so compare each model's profile rather than treating the values "
+        "as a single common score. Faint dots are condition-level outcomes; outlined points and "
+        "whiskers are pooled estimates and 95% confidence intervals."
+    )
+    st.plotly_chart(model_benchmark_overall_chart(), width="stretch", theme=None)
+    st.subheader("AIRiskDilemmas")
+    st.caption(
+        "Mean pairwise Spearman rho is shown separately because it measures rank stability, "
+        "not a percentage outcome. Higher values mean the model ranks the same dilemmas more "
+        "consistently across prompt framings; lower values mean greater framing sensitivity."
+    )
+    st.plotly_chart(airisk_overall_chart(), width="stretch", theme=None)
+
+
 def main() -> None:
     st.set_page_config(
         page_title="Moral prompting results · Dashboard 3",
@@ -1272,43 +2077,75 @@ def main() -> None:
     render_header()
     benchmark = st.segmented_control(
         "Benchmark",
-        ["DEO/ConSQ", "Elephant", "AIRiskDilemmas"],
+        [
+            "DEO/ConSQ",
+            "Elephant 1",
+            "Elephant 2",
+            "AIRiskDilemmas",
+            "Role Conflict",
+            "Variance",
+            "Realism",
+            "Between benchmarks",
+        ],
         default="DEO/ConSQ",
         key="benchmark",
         width="stretch",
-        wrap=True,
     )
     if "elephant_y_axis_max" not in st.session_state:
         st.session_state.elephant_y_axis_max = 40
-    with st.container(horizontal=True):
-        with st.popover(
-            "Prompt explorer",
-            icon=":material/grid_view:",
-            width="content",
-            key="prompt_explorer_popover",
-        ):
-            render_prompt_explorer(benchmark)
-        if benchmark == "Elephant":
+    if benchmark in {"DEO/ConSQ", "Elephant 1", "Elephant 2", "AIRiskDilemmas"}:
+        with st.container(horizontal=True):
             with st.popover(
-                f"Y-axis · {st.session_state.elephant_y_axis_max}%",
-                icon=":material/height:",
+                "Prompt explorer",
+                icon=":material/grid_view:",
                 width="content",
-                key="elephant_y_axis_popover",
             ):
-                st.number_input(
-                    "Maximum (%)",
-                    min_value=10,
-                    max_value=100,
-                    step=5,
-                    key="elephant_y_axis_max",
-                    width=180,
-                )
+                render_prompt_explorer(benchmark)
+            if benchmark == "Elephant 1":
+                with st.popover(
+                    f"Y-axis · {st.session_state.elephant_y_axis_max}%",
+                    icon=":material/height:",
+                    width="content",
+                ):
+                    st.number_input(
+                        "Maximum (%)",
+                        min_value=10,
+                        max_value=100,
+                        step=5,
+                        key="elephant_y_axis_max",
+                        width=180,
+                    )
     if benchmark == "DEO/ConSQ":
         render_deo()
-    elif benchmark == "Elephant":
+    elif benchmark == "Elephant 1":
         render_elephant(float(st.session_state.elephant_y_axis_max))
-    else:
+    elif benchmark == "Elephant 2":
+        render_elephant(
+            80,
+            dataset="Elephant 2",
+            title="Elephant 2",
+            key_prefix="elephant2",
+        )
+    elif benchmark == "Role Conflict":
+        render_elephant(
+            80,
+            y_axis_min=50,
+            dataset="Role Conflict",
+            title="Role Conflict",
+            key_prefix="role_conflict",
+            caption=(
+                "Outcome: percentage choosing the role with the higher urgency rating. "
+                "Higher is more urgency-aligned."
+            ),
+        )
+    elif benchmark == "AIRiskDilemmas":
         render_airisk()
+    elif benchmark == "Variance":
+        render_variance()
+    elif benchmark == "Realism":
+        render_realism()
+    else:
+        render_between_benchmarks()
 
 
 if __name__ == "__main__":

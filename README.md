@@ -1,7 +1,9 @@
 # Moral prompting results
 
 Interactive Streamlit dashboard comparing prompt-condition results across
-DEO/ConSQ, Elephant, and AIRiskDilemmas.
+DEO/ConSQ, two Elephant runs, AIRiskDilemmas, and Role Conflict. It includes
+collapsed prompt-factor views, cross-benchmark comparisons, and an interactive
+realism classifier.
 
 ## Run locally
 

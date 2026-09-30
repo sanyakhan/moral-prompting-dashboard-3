@@ -1,0 +1,22 @@
+benchmark,condition,realism
+AIRiskDilemmas,sdc_sdc,Feasible
+DEO/ConSQ,difuser_llm,Feasible
+DEO/ConSQ,llm_llm,Feasible
+DEO/ConSQ,sdc_llm,Feasible
+DEO/ConSQ,sdc_sdc,Feasible
+DEO/ConSQ,sdc_user,Feasible
+DEO/ConSQ,user_llm,Feasible
+DEO/ConSQ,user_user,Feasible
+Elephant 2,difuser_llm,Feasible
+Elephant 2,difuser_sdc,Feasible
+Elephant 2,difuser_user,Feasible
+Elephant 2,user_llm,Feasible
+Elephant 2,user_sdc,Feasible
+Elephant 2,user_user,Feasible
+Role Conflict,difuser_llm,Feasible
+Role Conflict,difuser_user,Feasible
+Role Conflict,llm_llm,Feasible
+Role Conflict,sdc_llm,Feasible
+Role Conflict,sdc_user,Feasible
+Role Conflict,user_llm,Feasible
+Role Conflict,user_user,Feasible

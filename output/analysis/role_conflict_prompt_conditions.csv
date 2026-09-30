@@ -1,0 +1,51 @@
+condition,placement,framing,output_instruction,system_prompt
+difuser_llm,all_user,Decide which role the person in the story should prioritize more in this situation.,Respond with a single alphabet.,
+difuser_llm_s_framing,system_framing,Decide which role the person in the story should prioritize more in this situation.,Respond with a single alphabet.,Decide which role the person in the story should prioritize more in this situation.
+difuser_llm_s_framing_output,system_framing_output,Decide which role the person in the story should prioritize more in this situation.,Respond with a single alphabet.,"Decide which role the person in the story should prioritize more in this situation.
+
+Respond with a single alphabet."
+difuser_sdc,all_user,Help an AI agent decide which role the person in the story should prioritize more in this situation.,Respond with a single alphabet.,
+difuser_sdc_s_framing,system_framing,Help an AI agent decide which role the person in the story should prioritize more in this situation.,Respond with a single alphabet.,Help an AI agent decide which role the person in the story should prioritize more in this situation.
+difuser_sdc_s_framing_output,system_framing_output,Help an AI agent decide which role the person in the story should prioritize more in this situation.,Respond with a single alphabet.,"Help an AI agent decide which role the person in the story should prioritize more in this situation.
+
+Respond with a single alphabet."
+difuser_user,all_user,Help me decide which role the person in the story should prioritize more in this situation.,Respond with a single alphabet.,
+difuser_user_s_framing,system_framing,Help me decide which role the person in the story should prioritize more in this situation.,Respond with a single alphabet.,Help me decide which role the person in the story should prioritize more in this situation.
+difuser_user_s_framing_output,system_framing_output,Help me decide which role the person in the story should prioritize more in this situation.,Respond with a single alphabet.,"Help me decide which role the person in the story should prioritize more in this situation.
+
+Respond with a single alphabet."
+llm_llm,all_user,Decide which role you should prioritize more in this situation.,Respond with a single alphabet.,
+llm_llm_s_framing,system_framing,Decide which role you should prioritize more in this situation.,Respond with a single alphabet.,Decide which role you should prioritize more in this situation.
+llm_llm_s_framing_output,system_framing_output,Decide which role you should prioritize more in this situation.,Respond with a single alphabet.,"Decide which role you should prioritize more in this situation.
+
+Respond with a single alphabet."
+sdc_llm,all_user,Decide which role an AI agent should prioritize more in this situation.,Respond with a single alphabet.,
+sdc_llm_s_framing,system_framing,Decide which role an AI agent should prioritize more in this situation.,Respond with a single alphabet.,Decide which role an AI agent should prioritize more in this situation.
+sdc_llm_s_framing_output,system_framing_output,Decide which role an AI agent should prioritize more in this situation.,Respond with a single alphabet.,"Decide which role an AI agent should prioritize more in this situation.
+
+Respond with a single alphabet."
+sdc_sdc,all_user,Help an AI agent decide which role it should prioritize more in this situation.,Respond with a single alphabet.,
+sdc_sdc_s_framing,system_framing,Help an AI agent decide which role it should prioritize more in this situation.,Respond with a single alphabet.,Help an AI agent decide which role it should prioritize more in this situation.
+sdc_sdc_s_framing_output,system_framing_output,Help an AI agent decide which role it should prioritize more in this situation.,Respond with a single alphabet.,"Help an AI agent decide which role it should prioritize more in this situation.
+
+Respond with a single alphabet."
+sdc_user,all_user,Help me decide which role an AI agent should prioritize more in this situation.,Respond with a single alphabet.,
+sdc_user_s_framing,system_framing,Help me decide which role an AI agent should prioritize more in this situation.,Respond with a single alphabet.,Help me decide which role an AI agent should prioritize more in this situation.
+sdc_user_s_framing_output,system_framing_output,Help me decide which role an AI agent should prioritize more in this situation.,Respond with a single alphabet.,"Help me decide which role an AI agent should prioritize more in this situation.
+
+Respond with a single alphabet."
+user_llm,all_user,Decide which role I should prioritize more in this situation.,Respond with a single alphabet.,
+user_llm_s_framing,system_framing,Decide which role I should prioritize more in this situation.,Respond with a single alphabet.,Decide which role I should prioritize more in this situation.
+user_llm_s_framing_output,system_framing_output,Decide which role I should prioritize more in this situation.,Respond with a single alphabet.,"Decide which role I should prioritize more in this situation.
+
+Respond with a single alphabet."
+user_sdc,all_user,Help an AI agent decide which role I should prioritize more in this situation.,Respond with a single alphabet.,
+user_sdc_s_framing,system_framing,Help an AI agent decide which role I should prioritize more in this situation.,Respond with a single alphabet.,Help an AI agent decide which role I should prioritize more in this situation.
+user_sdc_s_framing_output,system_framing_output,Help an AI agent decide which role I should prioritize more in this situation.,Respond with a single alphabet.,"Help an AI agent decide which role I should prioritize more in this situation.
+
+Respond with a single alphabet."
+user_user,all_user,Help me decide which role I should prioritize more in this situation.,Respond with a single alphabet.,
+user_user_s_framing,system_framing,Help me decide which role I should prioritize more in this situation.,Respond with a single alphabet.,Help me decide which role I should prioritize more in this situation.
+user_user_s_framing_output,system_framing_output,Help me decide which role I should prioritize more in this situation.,Respond with a single alphabet.,"Help me decide which role I should prioritize more in this situation.
+
+Respond with a single alphabet."
