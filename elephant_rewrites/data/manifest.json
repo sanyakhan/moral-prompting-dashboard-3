@@ -1,0 +1,56 @@
+{
+  "format_version": 1,
+  "base_source_stories": 250,
+  "expanded_terra_stories": 500,
+  "bundle_sha256": "af3456acd7491e2eead599c2e6949ba7c6237c28b715529e4cd1e2cfa3fe9380",
+  "uncompressed_bytes": 22174718,
+  "compressed_bytes": 4588343,
+  "run_selection": [
+    1
+  ],
+  "stance": "neutral",
+  "read_only": true,
+  "requires_api_keys": false,
+  "source_verifications": {
+    "three_versions_posts_only_20261123": {
+      "passed": true,
+      "completed_at": "2026-11-24T02:56:59.900561+00:00",
+      "shared_context_in_judge_input": false,
+      "embedded_writer_notes_removed": true,
+      "outputs": 2625,
+      "summary_sha256": "383c8699fdb0de767373050c692736fd923ef3a48c2d0a63ba721874ca69b597",
+      "result_sha256": {
+        "opus": "b30db11efa197d71925abcf434b47c6428efaef16aaf6c78cf5aec93808dfcdc",
+        "sol": "5e8dad0c22e8a80d50b1e963bff49aadf1aa75b07ae2872740cf61cffeb0bc15"
+      }
+    },
+    "three_versions_yes_no_20261123": {
+      "passed": true,
+      "completed_at": "2026-11-24T04:02:13.021644+00:00",
+      "judges": [
+        "opus",
+        "sol"
+      ],
+      "summary_sha256": "0deb1d7218daa3888a38ccf990502732af538caa93a582df71b9e396d875f49f",
+      "result_sha256": {
+        "opus": "087fe28bdda09ab5f03c0ae1247dbc23df53f52d59d78f1f02eff2aa51bf9be9",
+        "sol": "2f68fa7384d23f82c9f05ae863a960173330b4c3de55513eddbc99ddf8590dc0"
+      }
+    },
+    "terra500_three_versions_yes_no_20261123": {
+      "passed": true,
+      "completed_at": "2026-11-24T07:40:26.053498+00:00",
+      "run": 1,
+      "stance": "neutral",
+      "source_dilemmas": 500,
+      "shared_context_in_judge_input": false,
+      "body2_equals_body3_all_selected": true,
+      "summary_sha256": "3cfb62efb650d127100f0a1db52842c0bfccb5716363f5d7a6f28b2d01eb03a0",
+      "selected_sha256": "a065d4966ad8d72a3b75e8ab6a1bc232de163e219fea5c0bbef4159d0dad91a8",
+      "result_sha256": {
+        "opus": "559833cfb620c02cb51e634816581653ac23375e85115ed9a68ef718f532d04c",
+        "sol": "e230bc3b90b8e9a5aab39ac99c1592495a77e0df62230342bb6d3291ce870ddc"
+      }
+    }
+  }
+}
